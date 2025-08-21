@@ -235,6 +235,92 @@ const GeographicEnrollmentDashboard = () => {
     );
   };
 
+  // Combined Age-Gender Bar Chart Component
+  const CombinedAgeGenderChart = ({ ageData, genderData, title }) => {
+    // Calculate gender distribution per age group based on total percentages
+    const calculateGenderByAge = () => {
+      return ageData.map(ageGroup => {
+        const totalInGroup = ageGroup.count;
+        const maleCount = Math.round(totalInGroup * (genderData.male.percentage / 100));
+        const femaleCount = totalInGroup - maleCount;
+        
+        return {
+          range: ageGroup.range,
+          male: maleCount,
+          female: femaleCount,
+          total: totalInGroup
+        };
+      });
+    };
+
+    const combinedData = calculateGenderByAge();
+    const maxValue = Math.max(...combinedData.map(d => Math.max(d.male, d.female)));
+    
+    return (
+      <div className="bg-white p-4 rounded-lg border border-gray-200">
+        <h4 className="text-md font-semibold text-gray-800 mb-4">{title}</h4>
+        
+        {/* Legend */}
+        <div className="flex items-center space-x-6 mb-4">
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-blue-500 rounded"></div>
+            <span className="text-sm text-gray-700">Male</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <div className="w-4 h-4 bg-pink-500 rounded"></div>
+            <span className="text-sm text-gray-700">Female</span>
+          </div>
+        </div>
+
+        <div className="flex items-end justify-between space-x-3" style={{ height: '240px' }}>
+          {combinedData.map((item, index) => (
+            <div key={index} className="flex flex-col items-center flex-1">
+              <div className="w-full flex items-end justify-center space-x-1" style={{ height: '180px' }}>
+                {/* Male Bar */}
+                <div className="flex flex-col items-center flex-1 group">
+                  <div className="w-full flex flex-col justify-end" style={{ height: '160px' }}>
+                    <div 
+                      className="bg-blue-500 rounded-t-sm relative cursor-pointer hover:bg-blue-600 transition-all"
+                      style={{ 
+                        height: `${(item.male / maxValue) * 140}px`,
+                        minHeight: '4px'
+                      }}
+                    >
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        Male: {item.male}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Female Bar */}
+                <div className="flex flex-col items-center flex-1 group">
+                  <div className="w-full flex flex-col justify-end" style={{ height: '160px' }}>
+                    <div 
+                      className="bg-pink-500 rounded-t-sm relative cursor-pointer hover:bg-pink-600 transition-all"
+                      style={{ 
+                        height: `${(item.female / maxValue) * 140}px`,
+                        minHeight: '4px'
+                      }}
+                    >
+                      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                        Female: {item.female}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Age Group Label */}
+              <div className="text-xs text-gray-600 mt-3 text-center font-medium">{item.range}</div>
+              <div className="text-xs text-gray-500 text-center">Total: {item.total}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const PieChart = ({ data, title }) => {
     const total = data.reduce((sum, item) => sum + item.value, 0);
     let currentAngle = 0;
@@ -437,32 +523,70 @@ const GeographicEnrollmentDashboard = () => {
 
                 {activeTab === 'age' && (
                   <div className="space-y-6">
-                    <BarChart 
-                      data={currentStateData.ageDistribution}
-                      title="Enrollment by Age Group"
-                      xKey="range"
-                      yKey="count"
-                      color="#3B82F6"
+                    <CombinedAgeGenderChart 
+                      ageData={currentStateData.ageDistribution}
+                      genderData={currentStateData.genderDistribution}
+                      title="Enrollment by Age Group and Gender"
                     />
                     
-                    <div className="bg-white border border-gray-200 rounded-lg">
-                      <div className="px-4 py-3 border-b border-gray-200">
-                        <h4 className="font-semibold text-gray-800">Age Group Details</h4>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                      <div className="bg-white border border-gray-200 rounded-lg">
+                        <div className="px-4 py-3 border-b border-gray-200">
+                          <h4 className="font-semibold text-gray-800">Age Group Details</h4>
+                        </div>
+                        <div className="p-4">
+                          <div className="space-y-3">
+                            {currentStateData.ageDistribution.map((group, index) => (
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div>
+                                  <div className="font-medium text-gray-800">{group.range} years</div>
+                                  <div className="text-sm text-gray-600">{group.count} employees ({group.percentage}%)</div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="font-bold text-green-600">${group.avgSalary.toLocaleString()}</div>
+                                  <div className="text-sm text-gray-600">Avg Salary</div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-4">
-                        <div className="space-y-3">
-                          {currentStateData.ageDistribution.map((group, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div>
-                                <div className="font-medium text-gray-800">{group.range} years</div>
-                                <div className="text-sm text-gray-600">{group.count} employees ({group.percentage}%)</div>
-                              </div>
-                              <div className="text-right">
-                                <div className="font-bold text-green-600">${group.avgSalary.toLocaleString()}</div>
-                                <div className="text-sm text-gray-600">Avg Salary</div>
-                              </div>
+
+                      <div className="bg-white border border-gray-200 rounded-lg">
+                        <div className="px-4 py-3 border-b border-gray-200">
+                          <h4 className="font-semibold text-gray-800">Gender Distribution Summary</h4>
+                        </div>
+                        <div className="p-4">
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="text-center p-4 bg-blue-50 rounded-lg">
+                              <div className="text-2xl font-bold text-blue-600">{currentStateData.genderDistribution.male.count}</div>
+                              <div className="text-blue-800 font-medium">Male</div>
+                              <div className="text-sm text-blue-600">{currentStateData.genderDistribution.male.percentage}%</div>
                             </div>
-                          ))}
+                            <div className="text-center p-4 bg-pink-50 rounded-lg">
+                              <div className="text-2xl font-bold text-pink-600">{currentStateData.genderDistribution.female.count}</div>
+                              <div className="text-pink-800 font-medium">Female</div>
+                              <div className="text-sm text-pink-600">{currentStateData.genderDistribution.female.percentage}%</div>
+                            </div>
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Male Avg Age:</span>
+                              <span className="font-medium">{currentStateData.genderDistribution.male.avgAge}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Female Avg Age:</span>
+                              <span className="font-medium">{currentStateData.genderDistribution.female.avgAge}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Male Avg Claims:</span>
+                              <span className="font-medium">${currentStateData.genderDistribution.male.avgClaims}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Female Avg Claims:</span>
+                              <span className="font-medium">${currentStateData.genderDistribution.female.avgClaims}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
