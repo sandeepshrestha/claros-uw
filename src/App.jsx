@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GeographicEnrollmentDashboard from './GeographicEnrollmentDashboard';
 
 const ComprehensiveStopLossDashboard = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState('12months');
@@ -417,6 +418,7 @@ const ComprehensiveStopLossDashboard = () => {
               { id: 'premiums', label: 'Premium Analysis' },
               { id: 'claims', label: 'Claims Analytics' },
               { id: 'demographics', label: 'Demographics' },
+              { id: 'geographic', label: 'Geographic' },
               { id: 'benchmarks', label: 'Benchmarks' }
             ].map(tab => (
               <button
@@ -771,6 +773,10 @@ const ComprehensiveStopLossDashboard = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {activeTab === 'geographic' && (
+          <GeographicEnrollmentDashboard />
         )}
 
         {activeTab === 'benchmarks' && (
