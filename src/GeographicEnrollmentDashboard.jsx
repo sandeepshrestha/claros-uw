@@ -657,25 +657,25 @@ const GeographicEnrollmentDashboard = () => {
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="bg-gray-50">
-                                <th className="px-3 py-2 text-left font-medium">ZIP Code</th>
-                                <th className="px-3 py-2 text-left font-medium">City</th>
-                                <th className="px-3 py-2 text-center font-medium">Members</th>
-                                <th className="px-3 py-2 text-center font-medium">Avg Income</th>
-                                <th className="px-3 py-2 text-center font-medium">Claims Rate</th>
+                                <th className="px-3 py-2 text-left font-medium text-gray-800">ZIP Code</th>
+                                <th className="px-3 py-2 text-left font-medium text-gray-800">City</th>
+                                <th className="px-3 py-2 text-center font-medium text-gray-800">Members</th>
+                                <th className="px-3 py-2 text-center font-medium text-gray-800">Avg Income</th>
+                                <th className="px-3 py-2 text-center font-medium text-gray-800">Claims Rate</th>
                               </tr>
                             </thead>
                             <tbody>
                               {currentStateData.zipCodeData.map((zip, index) => (
-                                <tr key={index} className="border-b border-gray-100">
-                                  <td className="px-3 py-2 font-mono">{zip.zip}</td>
-                                  <td className="px-3 py-2">{zip.city}</td>
-                                  <td className="px-3 py-2 text-center font-medium">{zip.members}</td>
-                                  <td className="px-3 py-2 text-center">${zip.avgIncome.toLocaleString()}</td>
+                                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                                  <td className="px-3 py-2 font-mono text-gray-900">{zip.zip}</td>
+                                  <td className="px-3 py-2 text-gray-900">{zip.city}</td>
+                                  <td className="px-3 py-2 text-center font-medium text-gray-900">{zip.members}</td>
+                                  <td className="px-3 py-2 text-center text-gray-900">${zip.avgIncome.toLocaleString()}</td>
                                   <td className="px-3 py-2 text-center">
-                                    <span className={`px-2 py-1 rounded-full text-xs ${
-                                      zip.claimsRate > 0.75 ? 'bg-red-100 text-red-700' :
-                                      zip.claimsRate > 0.70 ? 'bg-yellow-100 text-yellow-700' :
-                                      'bg-green-100 text-green-700'
+                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                      zip.claimsRate > 0.75 ? 'bg-red-100 text-red-800' :
+                                      zip.claimsRate > 0.70 ? 'bg-yellow-100 text-yellow-800' :
+                                      'bg-green-100 text-green-800'
                                     }`}>
                                       {(zip.claimsRate * 100).toFixed(1)}%
                                     </span>
